@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="p5.min.js"></script>
+</head>
+<body>
+<script>
+function setup() {
+  createCanvas(800, 600);
+  pixelDensity(1);
+  noLoop();
+}
+
+function draw() {
+  loadPixels();
+  
+  let maxIter = 500;
+  let zoom = 1.5;
+  let offsetX = 0;
+  let offsetY = 0;
+  let colorShift =1;
+
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      let a = (x - width / 2) / (height / 4) / zoom + offsetX;
+      let b = (y - height / 2) / (height / 4) / zoom + offsetY;
+      let ca = 0.355;
+      let cb =0.355;
+      let n = 0;
+
+      while (n < maxIter) {
+        let aa = a * a - b * b;
+        let bb = 2 * a * b;
+        a = aa + ca;
+        b = bb + cb;
+        if (a * a + b * b > 4) break;
+        n++;
+      }
+
+      let bright = map(n, 0, maxIter, 0, 1);
+      if (n === maxIter) bright = 0;
+
+      let pix = (x + y * width) * 4;
+      pixels[pix] = 255 * Math.sqrt(bright) * Math.cos(colorShift);
+      pixels[pix + 1] = 255 * Math.sqrt(bright) * Math.cos(colorShift + 2);
+      pixels[pix + 2] = 255 * Math.sqrt(bright) * Math.cos(colorShift + 4);
+      pixels[pix + 3] = 255;
+    }
+  }
+  updatePixels();
+}
+</script>
+</body>
+</html>
